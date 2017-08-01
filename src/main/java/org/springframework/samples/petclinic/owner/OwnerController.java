@@ -42,6 +42,7 @@ class OwnerController {
 
     private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
     private final OwnerRepository owners;
+    private final OwnerDAO ownerDAO = new OwnerDAO();
 
 
     @Autowired
@@ -66,7 +67,8 @@ class OwnerController {
         if (result.hasErrors()) {
             return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
         } else {
-            this.owners.save(owner);
+            //this.owners.save(owner);
+            ownerDAO.save(owner);
             return "redirect:/owners/" + owner.getId();
         }
     }
@@ -86,7 +88,8 @@ class OwnerController {
         }
 
         // find owners by last name
-        Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
+        Collection<Owner> results = ownerDAO.findByLastName(owner.getLastName());
+//        Collection<Owner> results = this.owners.findByLastName(owner.getLastName());
         if (results.isEmpty()) {
             // no owners found
             result.rejectValue("lastName", "notFound", "not found");
@@ -104,7 +107,8 @@ class OwnerController {
 
     @RequestMapping(value = "/owners/{ownerId}/edit", method = RequestMethod.GET)
     public String initUpdateOwnerForm(@PathVariable("ownerId") int ownerId, Model model) {
-        Owner owner = this.owners.findById(ownerId);
+        Owner owner = ownerDAO.findById(ownerId);
+//        Owner owner = this.owners.findById(ownerId);
         model.addAttribute(owner);
         return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
     }
@@ -115,7 +119,8 @@ class OwnerController {
             return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
         } else {
             owner.setId(ownerId);
-            this.owners.save(owner);
+            ownerDAO.save(owner);
+//            this.owners.save(owner);
             return "redirect:/owners/{ownerId}";
         }
     }
@@ -129,7 +134,8 @@ class OwnerController {
     @RequestMapping("/owners/{ownerId}")
     public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) {
         ModelAndView mav = new ModelAndView("owners/ownerDetails");
-        mav.addObject(this.owners.findById(ownerId));
+        mav.addObject(ownerDAO.findById(ownerId));
+//        mav.addObject(this.owners.findById(ownerId));
         return mav;
     }
 
